@@ -6,9 +6,57 @@
         <title>Lista ofert</title>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <style>
+            .searchForm{
+                margin:10px;
+            }
+            .searchForm input, .searchForm select{
+                margin:5px;
+            }
+        </style>
     </head>
     <body>
         <section layout:fragment="content">
+            <div id="offerFilter" class="panel panel-default">
+                <div class="panel-heading">Szukaj ofert</div>
+                <div class="panel-body">
+                    <form id="offerFilterForm" action="?" th:object="${offerFilter}" method="get" class="form-inline">
+                        <div class="searchForm">
+                            <input th:field="*{description}" type="text" class="form-control" placeholder="Opis"></input>
+                            <input type="submit" value="Szukaj" class="form-control"/>
+                        </div>                  
+                        <div class="searchForm">
+                            <select class="form-control" th:field="*{manufacturerId}">
+                                <option value="">Marka</option>
+                                <option th:each="manufacturer : ${carManufacturers}" th:value="${manufacturer.id}" th:text="${manufacturer.name}"></option>
+                            </select>
+                            <select class="form-control" th:field="*{modelId}">
+                                <option value="">Model</option>
+                                <option th:each="model : ${carModels}" th:value="${model.id}" th:text="${model.name}"></option>
+                            </select>
+                            <select class="form-control" th:field="*{fuelTypeId}">
+                                <option value="">Rodzaj paliwa</option>
+                                <option th:each="fuel : ${fuelTypes}" th:value="${fuel.id}" th:text="${fuel.name}"></option>
+                            </select>
+                            <input th:field="*{yearFrom}" type="number" class="form-control" placeholder="Rok od"></input>
+                            <input th:field="*{yearTo}" type="number" class="form-control" placeholder="Rok do"></input>
+                            <input type="submit" value="Filtruj" class="form-control"/>
+                        </div>
+                        <div class="searchForm">
+                            <select class="form-control" th:field="*{sortOption}">
+                                <option value="">Wybierz sortowanie</option>
+                                <option value="dateUp">Data rosnąco</option>
+                                <option value="dateDown">Data malejąco</option>
+                                <option value="priceUp">Cena rosnąco</option>
+                                <option value="priceDown">Cena malejąco</option>
+                                <option value="yearUp">Rok produkcji rosnąco</option>
+                                <option value="yearDown">Rok produkcji malejąco</option>
+                            </select>
+                            <input type="submit" value="Sortuj" class="form-control"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
             <table class="table">
                 <tr>
                     <th>Tytuł</th>
@@ -18,7 +66,7 @@
                     <th class="text-right">Cena</th>
                     <th></th>
                 </tr>
-                <tr th:each="offer : ${offers}">
+                <tr th:each="offer : ${offers.content}">
                     <td th:text="${offer.title}"></td>
                     <td th:text="${offer.model.manufacturer.name}"></td>
                     <td th:text="${offer.model.name}"></td>
@@ -30,6 +78,24 @@
                     <td><a th:href="|/offer/${offer.id}|">Pokaż</a></td>
                 </tr>
             </table>
+
+            <ul class="pagination">
+                <li th:if="${offers.hasPrevious() == true}" class="page-item">
+                    <a class="page-link" th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}" th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page',offers.getNumber()).toUriString()}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                <li class="page-item" th:classappend="${(offers.getNumber()+1) == page}? active : ''" th:each="page : ${pagesList}">
+                    <a class="page-link" th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}" th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page',page).toUriString()}" th:text="${page}"></a>
+                </li>
+                <li th:if="${offers.hasNext() == true}" class="page-item">
+                    <a class="page-link" th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}" th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page',offers.getNumber()+2).toUriString()}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            </ul>
         </section>
     </body>
 </html>

@@ -9,6 +9,7 @@
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
+
     </head>
     <body>
         <div class="container">
@@ -17,13 +18,20 @@
 
                 <h1>Furka4U <small>Najlepsze furki w necie</small></h1>
                 <h4>
-                <a href="/">Przeglądaj ogłoszenia</a> | <a href="/newoffer">Dodaj ogłoszenie</a>
+                    <a href="/">Przeglądaj ogłoszenia</a>
+                    <a th:if="${@userSession.getUsername() != null}" href="/newoffer"> | Dodaj ogłoszenie</a>
+                    <a th:if="${@userSession.getUsername() == null}" href="/loginForm"> | Zaloguj się</a>
                 </h4>
+                <div class="mx-6" th:if="${@userSession.getUsername() != null}">Zalogowany jako: 
+                    <span th:text="${@userSession.getUsername()}"></span>
+                    <a class="btn btn-primary" href="/logout"> Wyloguj</a>
+                </div>
             </div>
 
             <div layout:fragment="content">
                 Tu będzie wstawiona właściwa zawartość widoku.
             </div>
         </div>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     </body>
 </html>

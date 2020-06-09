@@ -6,6 +6,8 @@
 package wizut.tpsi.ogloszenia.jpa;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +17,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -24,55 +29,81 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "offer")
 public class Offer {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
-    @Size(max = 255)
+    @Size(max = 255, min = 5)
     @Column(name = "title")
+    @NotNull
     private String title;
 
+    @Min(1900)
     @Column(name = "year")
+    @NotNull
     private Integer year;
 
+    @Min(0)
     @Column(name = "mileage")
+    @NotNull
     private Integer mileage;
 
+    @Min(0)
+    @Max(20)
     @Column(name = "engine_size")
     private BigDecimal engineSize;
 
+    @Min(0)
     @Column(name = "engine_power")
     private Integer enginePower;
 
+    @Min(1)
+    @Max(5)
     @Column(name = "doors")
+    @NotNull
     private Integer doors;
 
-    @Size(max = 30)
+    @Size(max = 30, min = 3)
     @Column(name = "colour")
+    @NotNull
     private String colour;
 
+    @Column(name = "date_add")
+    private Timestamp date;
+    
     @Lob
-    @Size(max = 65535)
+    @Size(max = 65535, min = 5)
     @Column(name = "description")
+    @NotNull
     private String description;
 
+    @Min(0)
     @Column(name = "price")
+    @NotNull
     private Integer price;
 
     @JoinColumn(name = "model_id", referencedColumnName = "id")
     @ManyToOne
+    @NotNull
     private CarModel model;
 
     @JoinColumn(name = "body_style_id", referencedColumnName = "id")
     @ManyToOne
+    @NotNull
     private BodyStyle bodyStyle;
 
     @JoinColumn(name = "fuel_type_id", referencedColumnName = "id")
     @ManyToOne
+    @NotNull
     private FuelType fuelType;
 
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne
+    @NotNull
+    private User user;
+    
     public Offer() {
     }
 
@@ -179,6 +210,24 @@ public class Offer {
     public void setFuelType(FuelType fuelType) {
         this.fuelType = fuelType;
     }
-    
+
+    public Timestamp getDate() {
+        return date;
+    }
+
+    public void setDate() {
+	 Date temp = new Date();
+	 long time = temp.getTime();
+	 Timestamp ts = new Timestamp(time);
+         this.date = ts;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
     
 }
